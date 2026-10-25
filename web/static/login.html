@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>FM26 Analyst</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+  <meta name="theme-color" content="#161b22">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    body { display: grid; place-items: center; min-height: 100vh; padding: 16px; }
+    .login { width: 100%; max-width: 380px; }
+    .login .brand { justify-content: center; font-size: 20px; margin: 8px 0 20px; }
+    .login .card { display: grid; gap: 12px; }
+    .login input { width: 100%; padding: 10px; background: var(--bg); color: var(--text); border: 1px solid var(--line);
+                   border-radius: 6px; font-size: 16px; } /* 16px: iOS doesn't zoom in on focus */
+    .login button { width: 100%; padding: 11px 14px; font-size: 15px; }
+    .gbtn { background: #fff; color: #1f1f1f; display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .or { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 12px; }
+    .or::before, .or::after { content: ""; flex: 1; border-top: 1px solid var(--line); }
+    .msg { min-height: 1.4em; text-align: center; }
+    .msg.err { color: var(--bad); }
+    label.f { display: grid; gap: 4px; font-size: 12px; color: var(--muted); }
+    .step { display: grid; gap: 10px; padding-top: 12px; border-top: 1px solid var(--line); }
+    .step h3 { margin: 0; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+    .step h3 .n { width: 22px; height: 22px; border-radius: 50%; display: inline-grid; place-items: center; font-size: 12px;
+                  background: var(--panel2); border: 1px solid var(--line); }
+    .step.done h3 .n { background: var(--good); border-color: var(--good); color: #0d1117; }
+    .step .ok { color: var(--good); font-size: 13px; }
+    #codeIn { text-transform: uppercase; letter-spacing: .15em; font-family: ui-monospace, Consolas, monospace; text-align: center; }
+    #pwForm:not(.hidden), #signinBox:not(.hidden), #codeForm:not(.hidden) { display: grid; gap: 10px; }
+    .login .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="login">
+    <div class="brand"><span class="dot"></span> FM26 Analyst</div>
+    <div class="card">
+      <p style="margin:0">Pair this device with the dashboard on your PC: sign in, then enter the pairing code from
+        <b>Settings › Phone</b> on the PC.</p>
+      <label class="f">Name this device <input id="devName" maxlength="40" placeholder="e.g. My phone"></label>
+
+      <div class="step" id="step1">
+        <h3><span class="n">1</span> Sign in</h3>
+        <div id="who" class="ok hidden"></div>
+        <div id="signinBox">
+          <button id="googleBtn" class="gbtn hidden"><svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
+            <path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.6 13.2l7.9 6.2C12.4 13.6 17.7 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.1 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.4c-.5 2.9-2.2 5.3-4.6 6.9l7.4 5.8c4.3-4 6.9-9.9 6.9-17.2z"/>
+            <path fill="#FBBC05" d="M10.5 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.2C.9 16.6 0 20.2 0 24s.9 7.4 2.6 10.8l7.9-6.2z"/>
+            <path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.4-5.8c-2.1 1.4-4.8 2.3-8.5 2.3-6.3 0-11.6-4.1-13.5-9.9l-7.9 6.2C6.6 42.6 14.6 48 24 48z"/>
+          </svg>Sign in with Google</button>
+          <div id="orBox" class="or hidden">or</div>
+          <form id="pwForm" class="hidden">
+            <label class="f">Username <input name="user" autocomplete="username" autocapitalize="none" required></label>
+            <label class="f">Password <input name="password" type="password" autocomplete="current-password" required></label>
+            <button type="submit" class="secondary">Sign in with password</button>
+          </form>
+          <p id="noneBox" class="muted hidden" style="margin:0">No sign-in is set up yet. On your PC, open <b>Settings › Phone</b>
+            and set a password or Google sign-in.</p>
+        </div>
+      </div>
+
+      <div class="step" id="step2">
+        <h3><span class="n">2</span> Pairing code</h3>
+        <div id="codeOk" class="ok hidden">✓ Code accepted</div>
+        <form id="codeForm">
+          <input id="codeIn" maxlength="9" autocomplete="one-time-code" autocapitalize="characters" placeholder="ABCD-1234" required>
+          <button type="submit" class="secondary">Enter code</button>
+          <span class="muted small0">Scan the QR code shown on the PC, or type the code under it. It works once, for 10 minutes.</span>
+        </form>
+      </div>
+      <div id="msg" class="msg muted small0"></div>
+    </div>
+  </div>
+<script>
+const $ = (s) => document.querySelector(s);
+const show = (el, on = true) => el.classList.toggle("hidden", !on);
+const say = (t, err = false) => { $("#msg").textContent = t; $("#msg").classList.toggle("err", err); };
+const post = async (path, body) => {
+  const r = await fetch(path, { method: "POST", credentials: "include",
+    headers: { "Content-Type": "application/json", "X-FM-Remote": "1" }, body: JSON.stringify(body || {}) });
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(d.detail || r.statusText);
+  return d;
+};
+const name = () => $("#devName").value.trim();
+try { $("#devName").value = localStorage.getItem("fmDeviceName") || ""; } catch {}
+$("#devName").addEventListener("change", () => { try { localStorage.setItem("fmDeviceName", name()); } catch {} });
+
+// show where this device is: who signed in, whether the code was accepted
+function progress(st) {
+  if (st.done) { say("Paired ✓"); return location.replace("/"); }
+  $("#step1").classList.toggle("done", !!st.who);
+  show($("#who"), !!st.who); $("#who").textContent = st.who ? `✓ Signed in as ${st.who}` : "";
+  show($("#signinBox"), !st.who);
+  $("#step2").classList.toggle("done", !!st.code);
+  show($("#codeOk"), !!st.code); show($("#codeForm"), !st.code);
+  say(st.who && !st.code ? "Now enter the pairing code from your PC." : !st.who && st.code ? "Now sign in to finish pairing." : "");
+}
+
+async function sendCode(code) {
+  try { progress(await post("/auth/pair", { code, name: name() })); }
+  catch (e) { say(e.message, true); }
+}
+$("#codeIn").addEventListener("input", (e) => {           // ABCD-1234 as you type
+  const c = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8);
+  e.target.value = c.length > 4 ? `${c.slice(0, 4)}-${c.slice(4)}` : c;
+});
+$("#codeForm").addEventListener("submit", (e) => { e.preventDefault(); sendCode($("#codeIn").value); });
+
+let polling = null;
+async function poll(id, started = Date.now()) {
+  clearTimeout(polling);
+  try { sessionStorage.setItem("fmPoll", id); } catch {}
+  try {
+    const r = await post("/auth/google/poll", { poll: id, name: name() });
+    if (r.status === "ok") { try { sessionStorage.removeItem("fmPoll"); } catch {} $("#googleBtn").disabled = false; return progress(r); }
+    if (r.status === "error") { try { sessionStorage.removeItem("fmPoll"); } catch {} $("#googleBtn").disabled = false; return say(r.error, true); }
+  } catch (e) { /* network blip: keep trying */ }
+  if (Date.now() - started > 10 * 60 * 1000) { $("#googleBtn").disabled = false; return say("Sign-in timed out - try again.", true); }
+  polling = setTimeout(() => poll(id, started), 1500);
+}
+
+$("#googleBtn").addEventListener("click", async () => {
+  const w = window.open("about:blank", "_blank");    // open now, inside the tap, so it isn't blocked as a pop-up
+  $("#googleBtn").disabled = true;
+  say("Finish signing in with Google…");
+  try {
+    const r = await post("/auth/google/begin");
+    try { sessionStorage.setItem("fmPoll", r.poll); } catch {}
+    if (w) { w.location = r.url; poll(r.poll); }
+    else location.href = r.url;                       // no new window: go there and pick up the poll on the way back
+  } catch (e) { if (w) w.close(); $("#googleBtn").disabled = false; say(e.message, true); }
+});
+
+$("#pwForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const f = new FormData(e.target);
+  try { progress(await post("/auth/password", { user: f.get("user"), password: f.get("password"), name: name() })); }
+  catch (err) { say(err.message, true); }
+});
+
+fetch("/auth/options", { credentials: "include" }).then((r) => r.json()).then(async (o) => {
+  if (o.signed_in) return location.replace("/");
+  show($("#googleBtn"), o.google); show($("#pwForm"), o.password); show($("#orBox"), o.google && o.password);
+  show($("#noneBox"), !o.google && !o.password);
+  progress(o.pending || {});
+  // pairing link from the QR code: /pair#<code> (the code stays out of server logs)
+  const code = location.pathname === "/pair" ? location.hash.slice(1) : "";
+  if (code) { history.replaceState(null, "", "/login"); if (!(o.pending || {}).code) await sendCode(code); }
+  let pending = null;
+  try { pending = sessionStorage.getItem("fmPoll"); } catch {}
+  if (pending) { say("Finishing Google sign-in…"); $("#googleBtn").disabled = true; poll(pending); }
+}).catch(() => say("Can't reach your PC - is FM26 Analyst running?", true));
+</script>
+</body>
+</html>

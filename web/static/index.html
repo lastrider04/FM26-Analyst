@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>FM26 Analyst</title>
+  <link rel="icon" href="/static/favicon.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+  <meta name="theme-color" content="#161b22">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="FM26">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
+</head>
+<body>
+  <header>
+    <div class="brand"><span class="dot"></span> FM26 Analyst
+      <a id="snapChip" class="snapchip hidden" href="#settings"></a></div>
+    <nav id="nav">
+      <a href="#overview">Overview</a>
+      <a href="#players">Players</a>
+      <a href="#compare">Compare</a>
+      <a href="#development">Development</a>
+      <a href="#per90">Per 90</a>
+      <a href="#fixtures">Fixtures</a>
+      <a href="#settings">Settings</a>
+    </nav>
+    <div class="capture">
+      <span id="gameState" class="hstat"><span class="gdot"></span><span class="glbl">…</span></span>
+      <span id="lastCap" class="hstat muted"></span>
+      <span id="offline" class="offline hidden">Offline</span>
+      <label class="switch" id="autoWrap"><input type="checkbox" id="autoHdr"><span class="knob"></span><span>Auto</span></label>
+      <button id="captureBtn">Capture</button>
+    </div>
+  </header>
+  <div id="healthBanner" class="healthbanner hidden"></div>
+  <main id="view"></main>
+  <div id="toast" class="toast hidden"></div>
+  <button id="coachBtn" class="coachbtn" title="Ask the AI coach about your squad" aria-label="Open AI coach">💬<span>Ask the coach</span></button>
+  <section id="coach" class="coach hidden" aria-label="AI coach">
+    <div class="coachhead">
+      <div><b>AI coach</b> <span id="coachProvider" class="pill"></span><div id="coachFocus" class="muted small0"></div></div>
+      <div class="coachtools"><button id="coachHist" class="iconbtn" title="Saved conversations">🕘</button>
+        <button id="coachData" class="iconbtn" title="Show the data sent to the model">ⓘ</button>
+        <button id="coachClear" class="iconbtn" title="New conversation">↺</button>
+        <button id="coachClose" class="iconbtn" title="Close">✕</button></div>
+    </div>
+    <div id="coachLog" class="coachlog"></div>
+    <form id="coachForm" class="coachform">
+      <textarea id="coachInput" rows="2" placeholder="Ask about selection, form, fitness, development…"></textarea>
+      <button type="submit" id="coachSend">Send</button>
+    </form>
+  </section>
+  <script src="/static/app.js"></script>
+  <script src="/static/coach.js"></script>
+</body>
+</html>

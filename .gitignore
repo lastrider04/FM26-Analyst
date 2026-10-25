@@ -1,0 +1,38 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Local data: personal save data, never committed
+data/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+snapshots/
+
+# Secrets / local settings (API keys)
+config.json
+.env
+
+# Screenshots and exports dropped in the project root
+/*.jpg
+/*.jpeg
+/*.png
+/*.bmp
+/*.csv
+/*.html
+
+# Logs and scratch
+*.log
+dumps/
+scratch/
+
+# Editors / OS
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini

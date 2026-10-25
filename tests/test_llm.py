@@ -34,7 +34,7 @@ def _mock_async_client(monkeypatch, handler):
 
 
 def test_openai_compatible_stream(monkeypatch):
-    sse = "".join(f"data: {json.dumps({'choices': [{'delta': {'content': t}}]})}\n\n" for t in ("Rest ", "Doué")) + "data: [DONE]\n\n"
+    sse = "".join(f"data: {json.dumps({'choices': [{'delta': {'content': t}}]})}\n\n" for t in ("Rest ", "Hart")) + "data: [DONE]\n\n"
     seen = {}
 
     def handler(req):
@@ -45,7 +45,7 @@ def test_openai_compatible_stream(monkeypatch):
     async def run():
         return "".join([d async for d in client.stream_chat(
             {"base_url": "https://x.test/v1", "api_key": "sk-1", "model": "m", "temperature": 0.4}, [{"role": "user", "content": "hi"}])])
-    assert asyncio.run(run()) == "Rest Doué"
+    assert asyncio.run(run()) == "Rest Hart"
     assert seen["auth"] == "Bearer sk-1" and seen["body"]["stream"] is True
 
 

@@ -18,6 +18,7 @@ from .profile import load_profile
 # competition index (+0x8) -> name. FM gives cup stages their own index. "?" = inferred from
 # the numbering pattern, not yet seen on a fixture screen; everything else was confirmed from
 # the user's fixture screenshots (2026-10-24).
+UNKNOWN_COMPETITION = "Other competition"   # a competition id not in COMPETITION_NAMES (its index is still stored)
 COMPETITION_NAMES = {
     232: "Premier League",
     2798: "Friendly",
@@ -179,7 +180,7 @@ def read_fixtures(proc: GameProcess, club_id: int, profile: dict | None = None,
             home=names.get(home, str(home)), away=names.get(away, str(away)),
             home_goals=hg, away_goals=ag,
             home_pens=None if hp == 255 else hp, away_pens=None if ap == 255 else ap,
-            competition_index=c["cidx"], competition=COMPETITION_NAMES.get(c["cidx"], f"competition {c['cidx']}"),
+            competition_index=c["cidx"], competition=COMPETITION_NAMES.get(c["cidx"], UNKNOWN_COMPETITION),
             fixture_id=fid, neutral=c["venue"] == 3, kickoff=c["kickoff"],
         ))
     return sorted(out, key=lambda f: f.date)
@@ -232,7 +233,7 @@ def read_upcoming(proc: GameProcess, club_id: int, today: dt.date | None, profil
             best[k] = (date, hid, aid, cidx)
     out = [Fixture(date=d, home_id=h, away_id=a, home=names.get(h, str(h)), away=names.get(a, str(a)),
                    home_goals=None, away_goals=None, home_pens=None, away_pens=None, competition_index=c,
-                   competition=COMPETITION_NAMES.get(c, f"competition {c}"), fixture_id=None,
+                   competition=COMPETITION_NAMES.get(c, UNKNOWN_COMPETITION), fixture_id=None,
                    kickoff=info[(d, h, a, c)][0])
            for d, h, a, c in best.values()]
     return sorted(out, key=lambda x: (x.date, x.kickoff or ""))

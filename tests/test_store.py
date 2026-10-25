@@ -110,3 +110,12 @@ def test_hotkey_parse():
     assert parse("ctrl+shift+f9")[1] == 0x78
     with pytest.raises(ValueError):
         parse("hyper+s")
+
+
+def test_unknown_competition_label_is_tidied(tmp_path):
+    con = connect(tmp_path / "c.db")
+    con.execute("INSERT INTO fixtures (date, home_id, away_id, competition_index, competition) VALUES ('2031-12-17', 1, 2, 3991, 'competition 3991')")
+    con.commit()
+    con.close()
+    con = connect(tmp_path / "c.db")
+    assert con.execute("SELECT competition, competition_index FROM fixtures").fetchone()[:] == ("Other competition", 3991)

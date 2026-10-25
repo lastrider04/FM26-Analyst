@@ -119,6 +119,8 @@ def connect(path: Path) -> sqlite3.Connection:
         cols = {r[1] for r in con.execute(f"PRAGMA table_info({table})")}
         if column not in cols:
             con.execute(f"ALTER TABLE {table} ADD COLUMN {column} {ctype}")
+    # older captures labelled unknown competitions "competition <id>"; the id stays in competition_index
+    con.execute("UPDATE fixtures SET competition = 'Other competition' WHERE competition LIKE 'competition %'")
     con.execute("INSERT INTO meta VALUES ('schema_version', ?) ON CONFLICT (key) DO UPDATE SET value = excluded.value",
                 (str(SCHEMA_VERSION),))
     con.commit()

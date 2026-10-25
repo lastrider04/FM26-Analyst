@@ -1,5 +1,7 @@
 # FM26 Analyst
 
+![FM26 Analyst by Moj](docs/banner.png)
+
 **A companion app for Football Manager 26.** It watches your save while you play, and builds a history of your squad:
 - **every match:** ratings and stats;
 - **over time:** attributes, CA and development;

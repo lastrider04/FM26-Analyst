@@ -481,11 +481,16 @@ async def _send_json(send, status: int, body: dict, headers: list | None = None)
     await send({"type": "http.response.body", "body": data})
 
 
-def _same_origin(headers: dict) -> bool:
+def _same_origin(headers: dict, public_url: str = "") -> bool:
+    """The app's own header, and an Origin (when sent) that is this site: the Host the request came in on, or the
+    configured public address (tunnels and some proxies pass a different Host, e.g. localhost:8766)."""
     if headers.get(CSRF_HEADER) != "1":
         return False
     origin = headers.get("origin")
-    return not origin or urlparse(origin).netloc == headers.get("host", "")
+    if not origin:
+        return True
+    netloc = urlparse(origin).netloc
+    return netloc == headers.get("host", "") or bool(public_url) and netloc == urlparse(public_url).netloc
 
 
 class RemoteGate:
@@ -510,7 +515,7 @@ class RemoteGate:
         headers = {k.decode("latin-1").lower(): v.decode("latin-1") for k, v in scope.get("headers", [])}
         device = DEVICES.find(Request(scope).cookies.get(COOKIE))
         scope.setdefault("state", {})["remote_device"] = device
-        if method not in ("GET", "HEAD") and not _same_origin(headers):
+        if method not in ("GET", "HEAD") and not _same_origin(headers, str(cfg.get("public_url", ""))):
             return await _send_json(send, 403, {"detail": "Blocked: request didn't come from the FM26 Analyst app."})
         if path in ("/login", "/pair") or path.startswith("/auth/"):
             return await auth_app(scope, receive, send)

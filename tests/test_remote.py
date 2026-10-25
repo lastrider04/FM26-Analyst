@@ -125,6 +125,10 @@ def test_changes_need_the_app_header_and_same_origin(env):
     assert phone.put("/api/auto", json={"enabled": False}).status_code == 403
     assert phone.put("/api/auto", json={"enabled": False}, headers={**H, "Origin": "https://evil.example"}).status_code == 403
     assert phone.put("/api/auto", json={"enabled": False}, headers={**H, "Origin": "http://testserver"}).status_code == 200
+    # behind a tunnel the Host can differ (e.g. localhost:8766): the configured public address counts as this site
+    desk.put("/api/remote", json={"public_url": "https://fm26.example.com"})
+    assert phone.put("/api/auto", json={"enabled": False}, headers={**H, "Origin": "https://fm26.example.com"}).status_code == 200
+    assert phone.put("/api/auto", json={"enabled": False}, headers={**H, "Origin": "https://fm27.example.com"}).status_code == 403
 
 
 def test_expired_pair_code(env):

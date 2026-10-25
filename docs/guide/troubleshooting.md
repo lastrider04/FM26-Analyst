@@ -30,12 +30,17 @@
 | *"Game not running"* although FM26 is open | Wait up to 15 seconds. The game must be fully started, not still on the splash screen. |
 | No clubs found when choosing your club | FM26 must be running **with your save loaded**, not just the main menu. |
 | Capture button is greyed out | The game isn't running, you haven't chosen a club yet, or the reader self-check failed (see the banner). |
+| *"FM26 is still loading"* / **Loading save…** | The self-check can't read your save yet. Finish loading it; captures start by themselves within a minute. |
 | Auto-capture didn't capture after a match | Check the **Auto** switch is on and hover over it to see what it's waiting for. It captures about 2½ game hours after kick-off, so keep the game running a little past full time, or press **Capture**. |
 | The hotkey does nothing | Another program may be using Ctrl+Alt+S. Change it in **Settings › Capture** and restart the app. |
 | A capture says "failed" | Read the message. A capture taken while the game is loading or saving can fail; try again a moment later. If it keeps failing, check `data\app.log`. |
 
 ## "FM26 has been updated" banner
-Each time FM26 starts, the app checks that it can read this game build. If the game has been patched since this version of FM26 Analyst was made, the memory layout can change:
+Each time FM26 starts, the app checks that it can read this game build.
+
+**First, the save may still be loading.** If FM26 is at the main menu or a loading screen when the check runs, it fails because there's no squad to read yet. The top bar then shows **Loading save…**, and the check repeats every 45 seconds. The banner only appears if it still fails a couple of minutes after your save has loaded. If you see the banner straight after loading a save, click **Check again**.
+
+If the game has been patched since this version of FM26 Analyst was made, the memory layout can change:
 
 - **What happens:** captures and auto-capture **pause**, so no wrong data is stored. Your history and the dashboard keep working.
 - **"has been updated" (unknown build):** this game build has no reader profile yet. Check the [Releases page](https://github.com/lastrider04/FM26-Analyst/releases) for an update, or [open an issue](https://github.com/lastrider04/FM26-Analyst/issues) with your game version (from the FM26 main menu).

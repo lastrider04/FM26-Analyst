@@ -266,8 +266,11 @@ async function refreshStatus() {
     }
     const gs = $("#gameState");
     gs.classList.toggle("on", !!s.game_running);
-    gs.querySelector(".glbl").textContent = s.game_running ? "Game running" : "Game not running";
-    gs.title = s.game_running ? "FM26 is running: captures can be taken" : "Start FM26 to capture";
+    const loadingSave = s.game_running && (s.health || {}).status === "loading";
+    gs.querySelector(".glbl").textContent = !s.game_running ? "Game not running" : loadingSave ? "Loading save…" : "Game running";
+    gs.title = !s.game_running ? "Start FM26 to capture" : loadingSave
+      ? "FM26 is running but your save isn't readable yet (still loading?). Captures start once it is; this re-checks by itself."
+      : "FM26 is running: captures can be taken";
     const lc = $("#lastCap");
     lc.textContent = s.latest ? `Updated ${fmtDate(s.latest.game_date)}` : "No captures yet";
     lc.title = s.latest ? `Last capture: game date ${s.latest.game_date} (capture #${s.latest.id})` : "Press Capture with FM26 running";

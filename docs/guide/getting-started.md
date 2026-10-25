@@ -49,7 +49,9 @@ Each capture is a **snapshot** of that moment. Comparing snapshots is how the ap
 
 The **Auto** switch in the top bar turns automatic capture on or off. Hover over it to see what it's waiting for.
 
-**Reader self-check:** each time FM26 starts, the app runs a quick self-check (it takes a few seconds) to confirm it can read this game build correctly. If the game has been patched and the reader no longer matches, captures pause and a banner explains why, so wrong data is never stored. See [Troubleshooting](troubleshooting.md#fm26-has-been-updated-banner).
+**Reader self-check:** each time FM26 starts, the app runs a quick self-check (it takes a few seconds) to confirm it can read this game build correctly.
+- **While your save is still loading** (main menu, loading screen) there's nothing to read yet. The top bar shows **Loading save…**, captures wait, and the check repeats every 45 seconds by itself.
+- **If the game has been patched** and the reader no longer matches, the check keeps failing. Captures then pause and a banner explains why, so wrong data is never stored. See [Troubleshooting](troubleshooting.md#fm26-has-been-updated-banner).
 
 ## The top bar
 From left to right:

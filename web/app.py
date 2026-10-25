@@ -75,6 +75,9 @@ class CaptureState:
         if club() is None:
             self.last = {"ok": False, "error": "Choose the club you manage first (on the Overview page)."}
             return False
+        if HEALTH.loading():
+            self.last = {"ok": False, "error": "FM26 is still loading: captures start once your save has loaded."}
+            return False
         if HEALTH.bad():            # the reader doesn't match this game build: don't store doubtful data
             self.last = {"ok": False, "error": "Captures are paused: the reader self-check failed for this game build "
                          "(see the banner). Your history is safe."}
@@ -99,16 +102,33 @@ class CaptureState:
 
 
 class HealthState:
-    """Reader self-check, run once per game process (i.e. whenever FM starts, which is when a patch would show)."""
+    """Reader self-check, run whenever FM starts (which is when a patch would show).
+
+    FM can be found before a save has finished loading (main menu, loading screen), when there's no squad or game
+    date to read yet. So a failed check is retried every RETRY_SECONDS, shown as "loading" (captures wait, no banner),
+    and only reported as failed once it keeps failing: FAILS_TO_REPORT checks spanning at least REPORT_AFTER seconds.
+    "Check again" (force) gives an immediate final verdict."""
+
+    RETRY_SECONDS = 45
+    FAILS_TO_REPORT = 3
+    REPORT_AFTER = 120
 
     def __init__(self):
         self.lock = threading.Lock()
         self.pid: int | None = None
         self.running = False
         self.result: dict | None = None
+        self.fails = 0
+        self.first_fail: float | None = None
+        self.next_check = 0.0
 
     def bad(self) -> bool:
-        return bool(self.result and self.result["status"] != "ok")
+        """The reader doesn't match this build: captures pause and the banner shows."""
+        return bool(self.result and self.result["status"] in ("unknown_build", "failed"))
+
+    def loading(self) -> bool:
+        """Checks are failing so far, most likely because the save is still loading: captures wait, no banner."""
+        return bool(self.result and self.result["status"] == "loading")
 
     def maybe_check(self, force: bool = False) -> None:
         from reader.process import ProcessNotFound, find_pid
@@ -116,24 +136,43 @@ class HealthState:
             pid = find_pid()
         except (ProcessNotFound, OSError):
             return
-        if (pid == self.pid and not force) or not self.lock.acquire(blocking=False):
+        new_game = pid != self.pid
+        due = self.loading() and time.time() >= self.next_check
+        if not (new_game or due or force) or not self.lock.acquire(blocking=False):
             return
+        if new_game:
+            self.fails, self.first_fail, self.result = 0, None, None
         self.pid, self.running = pid, True
+        threading.Thread(target=self._run, args=(force,), daemon=True, name="self-check").start()
 
-        def work():
-            from reader.process import GameProcess
-            from reader.selfcheck import self_check
+    def _run(self, final: bool = False) -> None:
+        """One check (the lock is held by the caller); decides between ok, loading (retry) and failed."""
+        from reader.process import GameProcess
+        from reader.selfcheck import self_check
+        try:
             try:
                 with GameProcess() as p:
-                    self.result = self_check(p, club())
+                    r = self_check(p, club())
             except Exception as e:      # noqa: BLE001
-                self.result = {"status": "failed", "checks": [{"name": "attach to game", "ok": False, "detail": str(e)}]}
-            finally:
-                self.running = False
-                self.lock.release()
-                print(f"reader self-check: {self.result['status']}", flush=True)
-
-        threading.Thread(target=work, daemon=True, name="self-check").start()
+                r = {"status": "failed", "checks": [{"name": "attach to game", "ok": False, "detail": str(e)}]}
+            if r["status"] != "failed":
+                self.fails, self.first_fail = 0, None
+                self.result = r
+            else:
+                now = time.time()
+                self.fails += 1
+                self.first_fail = self.first_fail or now
+                bad = [f"{c['name']}: {c.get('detail', '')}" for c in r.get("checks", []) if not c["ok"]]
+                print(f"reader self-check failed ({self.fails}): " + "; ".join(bad), flush=True)
+                if final or (self.fails >= self.FAILS_TO_REPORT and now - self.first_fail >= self.REPORT_AFTER):
+                    self.result = r
+                else:                   # probably still loading the save: check again shortly
+                    self.result = {**r, "status": "loading"}
+                    self.next_check = now + self.RETRY_SECONDS
+        finally:
+            self.running = False
+            self.lock.release()
+            print(f"reader self-check: {self.result['status']}", flush=True)
 
     def state(self) -> dict:
         return {"running": self.running, **(self.result or {"status": "pending"})}
@@ -151,6 +190,8 @@ def _auto_paused() -> str | None:
     HEALTH.maybe_check()            # cheap unless the game was (re)started
     if HEALTH.running:
         return "checking the reader against this game build"
+    if HEALTH.loading():
+        return "waiting for FM26 to finish loading your save"
     if HEALTH.bad():
         return "paused: reader self-check failed for this game build"
     return None

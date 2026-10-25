@@ -22,6 +22,7 @@ from .profile import load_profile
 
 UNPACK = {"i16": "<h", "i32": "<i", "u8": "<B", "f32": "<f"}
 MIN_PLAYED = 11  # smaller vectors are partial copies, not full line-ups
+MAX_LINEUP = 40  # starters + the biggest bench any competition allows, with room to spare
 
 
 @dataclass
@@ -108,6 +109,19 @@ def _find_holders(mem: Memory, targets: np.ndarray) -> dict[int, int]:
     return out
 
 
+def vector_records(ptr, holders: dict[int, int], owner: int) -> list[int] | None:
+    """The match records of the line-up vector whose header (begin, end, capacity) is at `owner`, or None if it
+    isn't a plausible line-up vector. Only [begin, end) counts: pointers just outside it belong to something else."""
+    begin, end, cap = ptr(owner), ptr(owner + 8), ptr(owner + 16)
+    if not (begin and end and cap) or not begin < end <= cap or (end - begin) % 8:
+        return None
+    n = (end - begin) // 8
+    if not MIN_PLAYED <= n <= MAX_LINEUP:
+        return None
+    slots = [begin + 8 * i for i in range(n)]
+    return [holders[s] for s in slots] if all(s in holders for s in slots) else None
+
+
 def read_matches(proc: GameProcess, club_id: int, profile: dict | None = None) -> list[Match]:
     """All matches in memory in which `club_id` took part (one entry per match, copies merged)."""
     profile = profile or load_profile(proc.build_id())
@@ -137,25 +151,17 @@ def read_matches(proc: GameProcess, club_id: int, profile: dict | None = None) -
                                                          limit=500_000) if a % 8 == 0), dtype="<u8")
     holders = _find_holders(mem, records)
 
-    # group holder slots into contiguous vectors (line-ups); remember each vector's start
-    starts = sorted(h for h in holders if (h - 8) not in holders)
-    lineups: dict[int, list[int]] = {}
-    for s in starts:
-        recs, h = [], s
-        while h in holders:
-            recs.append(holders[h])
-            h += 8
-        lineups[s] = recs
-
-    # owner slot = an 8-byte field whose value is a line-up start (vector begin)
-    owners = _find_holders(mem, np.array(sorted(lineups), dtype="<u8"))
+    # owner = a vector<record*> header (begin, end, capacity) whose begin is a holder slot. The line-up is exactly
+    # [begin, end): neighbouring pointers to other records (another team's vector, or an unrelated structure just
+    # before ours) must not be glued onto it, so contiguous runs of holder slots aren't trusted as line-ups.
+    owners = _find_holders(mem, np.array(sorted(holders), dtype="<u8"))
 
     def team(owner: int) -> TeamMatch | None:
-        begin = mem.ptr(owner)
-        if begin not in lineups:
+        recs = vector_records(mem.ptr, holders, owner)
+        if recs is None:
             return None
         lineup = []
-        for r in lineups[begin]:
+        for r in recs:
             blob = proc.read(r, size)
             if not blob or len(blob) < size:
                 continue

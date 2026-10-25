@@ -69,6 +69,16 @@ The full walkthrough is in [Installation](docs/guide/installation.md) and [Getti
 ## Help and feedback
 - **Problems:** see [Troubleshooting](docs/guide/troubleshooting.md), or [open an issue](https://github.com/lastrider04/FM26-Analyst/issues).
 - **Ideas and pull requests** are welcome; see [For developers](docs/guide/development.md).
+- **Enjoying it?** [Buy me a coffee](#support) ☕
+
+## Support
+FM26 Analyst is free. If it's useful to you and you'd like to say thanks, you can buy me a coffee ☕. It's entirely optional and very much appreciated.
+
+<a href="https://buymeacoffee.com/moj1901"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me a Coffee" height="50"></a>
+
+<a href="https://buymeacoffee.com/moj1901"><img src="docs/bmc-qr.png" width="140" alt="QR code for buymeacoffee.com/moj1901"></a>
+
+[buymeacoffee.com/moj1901](https://buymeacoffee.com/moj1901)
 
 ## Licence
 [GPL-3.0](LICENSE). You're free to use, change and share FM26 Analyst. If you share a modified version, you must share its source under the same licence.

@@ -55,7 +55,7 @@ DPAPI means only your Windows account on this PC can decrypt them. That's also w
   - **Wrong attempts:** password and code sign-in pause after 5 wrong attempts in 15 minutes.
   - **Address restriction:** *Only accept connections from* can limit connections to your proxy or tunnel.
 - **Recommendations:**
-  - prefer [Tailscale](phone-tailscale.md) if you don't need public access;
+  - if you don't need public access, keep to the [local network](phone-local-network.md), or consider [Tailscale](phone-tailscale.md) (untested suggestion);
   - never forward port 8766 directly to the internet;
   - revoke devices you no longer use.
 

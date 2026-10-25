@@ -9,7 +9,7 @@ The simplest setup: your phone opens `http://<your PC's IP>:8766` while it's on 
 | Works in a few minutes | Only at home, on the same network |
 | Nothing exposed to the internet | Plain `http://`: no app install, no offline copy, and no Google sign-in, so you use a password |
 
-Want it outside the house, or installable as an app? Use [Tailscale](phone-tailscale.md) instead. It's nearly as quick to set up.
+Want it outside the house, or installable as an app? Use a [reverse proxy](phone-reverse-proxy.md) (tested), or try [Tailscale](phone-tailscale.md) (untested suggestion).
 
 ## 1. Give your PC a fixed IP address
 Your phone needs an address for the PC that doesn't change.

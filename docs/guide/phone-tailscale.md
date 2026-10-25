@@ -1,6 +1,8 @@
-# Phone app with Tailscale
+# Phone app with Tailscale (untested suggestion)
 
 [← Phone app](phone.md) · [Guide index](../../README.md#guide)
+
+> ⚠️ **Untested suggestion.** This setup hasn't been tested with FM26 Analyst yet. It's written from how Tailscale normally works, so treat it as a starting point; the commands and dashboard menus may differ slightly. The tested routes are the [local network](phone-local-network.md) and a [reverse proxy with NGINX Proxy Manager](phone-reverse-proxy.md). If you try this, please [report how it went](https://github.com/lastrider04/FM26-Analyst/issues).
 
 [Tailscale](https://tailscale.com) connects your own devices into a private network (a *tailnet*) that works anywhere: home Wi-Fi, mobile data, or someone else's Wi-Fi. With **Tailscale Serve**, your PC gets a real HTTPS address such as `https://my-pc.tail1234.ts.net` that only your devices can open.
 

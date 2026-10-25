@@ -1,6 +1,8 @@
-# Phone app through Cloudflare Tunnel
+# Phone app through Cloudflare Tunnel (untested suggestion)
 
 [← Phone app](phone.md) · [Guide index](../../README.md#guide)
+
+> ⚠️ **Untested suggestion.** This setup hasn't been tested with FM26 Analyst yet. It's written from how Cloudflare Tunnel normally works, so treat it as a starting point; the commands and dashboard menus may differ slightly. The tested routes are the [local network](phone-local-network.md) and a [reverse proxy with NGINX Proxy Manager](phone-reverse-proxy.md). If you try this, please [report how it went](https://github.com/lastrider04/FM26-Analyst/issues).
 
 [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) gives FM26 Analyst a public HTTPS address on your domain without opening any ports on your router. A small program on your PC (`cloudflared`) connects out to Cloudflare, and Cloudflare passes requests back through that connection.
 

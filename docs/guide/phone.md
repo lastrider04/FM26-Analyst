@@ -40,16 +40,18 @@ Phone ──(Wi-Fi, Tailscale, or the internet via HTTPS)──► your PC :8766
 
 | Method | Works from | HTTPS (install as an app, offline copy, Google sign-in) | Needs | Difficulty |
 |---|---|---|---|---|
-| **[Local network](phone-local-network.md)** | Home Wi-Fi only | ✗ (works in the browser; password sign-in) | Nothing extra | ★☆☆ Easiest |
-| **[Tailscale](phone-tailscale.md)** | Anywhere, on your own devices | ✓ | Free Tailscale account and app on PC and phone | ★☆☆ Easy |
-| **[Reverse proxy](phone-reverse-proxy.md)** | Anywhere, any browser | ✓ | A domain, a proxy (e.g. NGINX Proxy Manager), router port forwarding | ★★★ Advanced |
-| **[Cloudflare Tunnel](phone-cloudflare-tunnel.md)** | Anywhere, any browser | ✓ | A domain on Cloudflare (free plan) | ★★☆ Medium |
+| **[Local network](phone-local-network.md)** ✅ tested | Home Wi-Fi only | ✗ (works in the browser; password sign-in) | Nothing extra | ★☆☆ Easiest |
+| **[Tailscale](phone-tailscale.md)** ⚠️ untested | Anywhere, on your own devices | ✓ | Free Tailscale account and app on PC and phone | ★☆☆ Easy |
+| **[Reverse proxy](phone-reverse-proxy.md)** ✅ tested (NGINX Proxy Manager) | Anywhere, any browser | ✓ | A domain, a proxy (e.g. NGINX Proxy Manager), router port forwarding | ★★★ Advanced |
+| **[Cloudflare Tunnel](phone-cloudflare-tunnel.md)** ⚠️ untested | Anywhere, any browser | ✓ | A domain on Cloudflare (free plan) | ★★☆ Medium |
+
+✅ **tested** with FM26 Analyst · ⚠️ **untested suggestion**: written from how the service normally works, but not tried yet.
 
 **Which one?**
 - **Just want it on the sofa?** Use **[Local network](phone-local-network.md)**.
-- **Want it everywhere, with the least setup?** Use **[Tailscale](phone-tailscale.md)**. Nothing is exposed to the internet, and you get HTTPS, so it installs as an app.
+- **Want it everywhere, with the least setup?** **[Tailscale](phone-tailscale.md)** is worth a try (*untested suggestion*). Nothing is exposed to the internet, and you get HTTPS, so it installs as an app.
 - **Already run a home server or proxy with your own domain?** Use a **[Reverse proxy](phone-reverse-proxy.md)**.
-- **Have a domain but don't want to open router ports?** Use **[Cloudflare Tunnel](phone-cloudflare-tunnel.md)**.
+- **Have a domain but don't want to open router ports?** Try **[Cloudflare Tunnel](phone-cloudflare-tunnel.md)** (*untested suggestion*).
 
 > **Why HTTPS matters:** phones only install a site as an app, and only keep an offline copy, when it's served over HTTPS. Google also only signs in to HTTPS addresses. Over plain `http://` on your Wi-Fi the dashboard still works fully in the browser, and you sign in with a password.
 

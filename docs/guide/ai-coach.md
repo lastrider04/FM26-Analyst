@@ -46,6 +46,8 @@ Open **Settings › AI coach** and choose either **ChatGPT plan** or **API key /
 | **OpenRouter** | Pay per use, many models, cost shown per answer | API key | Depends on the model |
 | **Ollama / LM Studio** | Free, runs on your PC, works offline | Install and download a model | Depends on the model and your hardware |
 
+> **Tested:** the **ChatGPT plan** has been used live with FM26 Analyst. The others (OpenAI API, OpenRouter, Ollama, LM Studio) use the standard OpenAI-compatible API that the app's automated tests cover, but haven't been tried live yet. Treat their steps below as suggestions, and please [report any problems](https://github.com/lastrider04/FM26-Analyst/issues).
+
 ### ChatGPT plan (no API key)
 1. In **Settings › AI coach**, choose **ChatGPT plan**.
 2. Click **Continue with ChatGPT**. Your browser opens chatgpt.com. Sign in with the account that has your subscription, and allow plan usage.

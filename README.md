@@ -32,10 +32,10 @@ The full walkthrough is in [Installation](docs/guide/installation.md) and [Getti
 | 3 | **[Using the dashboard](docs/guide/dashboard.md)** | Overview and next-match picks, Players, player pages, Compare, Development, Per 90, Fixtures and match reports |
 | 4 | **[AI coach](docs/guide/ai-coach.md)** | Asking questions, and setting up the ChatGPT plan, OpenAI, OpenRouter, Ollama or LM Studio; coach instructions; privacy |
 | 5 | **[Phone app](docs/guide/phone.md)** | How it works, choosing a connection method, installing it on your phone, what a phone can do |
-| | ↳ [Local network (IP and port)](docs/guide/phone-local-network.md) | On home Wi-Fi only: the simplest setup |
-| | ↳ [Tailscale](docs/guide/phone-tailscale.md) | Anywhere, private, with HTTPS and no router changes. **Recommended.** |
-| | ↳ [Reverse proxy](docs/guide/phone-reverse-proxy.md) | Your own domain via NGINX Proxy Manager, Caddy or nginx: DNS, port forwarding, Let's Encrypt |
-| | ↳ [Cloudflare Tunnel](docs/guide/phone-cloudflare-tunnel.md) | Your own domain with no open ports |
+| | ↳ [Local network (IP and port)](docs/guide/phone-local-network.md) | On home Wi-Fi only: the simplest setup. ✅ Tested. |
+| | ↳ [Tailscale](docs/guide/phone-tailscale.md) | Anywhere, private, with HTTPS and no router changes. ⚠️ Untested suggestion. |
+| | ↳ [Reverse proxy](docs/guide/phone-reverse-proxy.md) | Your own domain via NGINX Proxy Manager (✅ tested), or Caddy or nginx (untested): DNS, port forwarding, Let's Encrypt |
+| | ↳ [Cloudflare Tunnel](docs/guide/phone-cloudflare-tunnel.md) | Your own domain with no open ports. ⚠️ Untested suggestion. |
 | | ↳ [Signing in and pairing](docs/guide/phone-sign-in.md) | Password, Google sign-in (OAuth client setup), pairing codes, managing devices |
 | | ↳ [Windows Firewall](docs/guide/firewall.md) | Which rule you need for each method, adding, checking and removing it |
 | 6 | **[Game snapshots and backups](docs/guide/game-snapshots.md)** | Separate histories per save or job, new games, backups, restoring, moving to a new PC |
@@ -61,7 +61,7 @@ The full walkthrough is in [Installation](docs/guide/installation.md) and [Getti
 </table>
 
 ## Requirements
-- **Windows** 10 or 11.
+- **Windows** 10 or 11.[^platforms]
 - **Football Manager 26** (PC), game build `FM26.fm26-rel-prod.2329565`. After a game patch, the app tells you if it needs an update; see [Troubleshooting](docs/guide/troubleshooting.md#fm26-has-been-updated-banner).
 - **Python** 3.10 or newer.
 - **Edge or Chrome** (Edge comes with Windows).
@@ -72,3 +72,5 @@ The full walkthrough is in [Installation](docs/guide/installation.md) and [Getti
 
 ## Licence
 [GPL-3.0](LICENSE). You're free to use, change and share FM26 Analyst. If you share a modified version, you must share its source under the same licence.
+
+[^platforms]: **Other platforms:** FM26 Analyst has only been built and tested on Windows. The Python code could probably be adapted for macOS or Linux without too much work, but that hasn't been attempted yet. The Windows-specific parts are: reading the game's memory (`reader/process.py`, `reader/memory.py`), encrypting secrets with DPAPI (`keystore.py`), the global hotkey (`capture/hotkey.py`), and the installer and shortcuts (`install.bat`, `tools/make_shortcut.ps1`, `launch.py`). The dashboard, analytics, coach and phone app are plain Python and web code. Contributions are welcome; see [For developers](docs/guide/development.md).

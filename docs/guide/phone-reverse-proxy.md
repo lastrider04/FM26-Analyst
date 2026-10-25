@@ -9,7 +9,7 @@ With a reverse proxy, your phone opens your own domain over HTTPS, for example `
 | Any browser, anywhere, nothing to install on the phone | You need a domain, a proxy and router port forwarding |
 | Real HTTPS: installs as an app, offline copy, Google sign-in | Your proxy is reachable from the internet, so keep it updated |
 
-This page uses **[NGINX Proxy Manager](https://nginxproxymanager.com)** (NPM) as the main example. There are equivalents for [Caddy](#caddy) and [plain nginx](#plain-nginx) further down. The proxy can run on the same PC or on another machine, such as a home server or Raspberry Pi.
+This page uses **[NGINX Proxy Manager](https://nginxproxymanager.com)** (NPM), the **tested** setup. The [Caddy](#caddy) and [plain nginx](#plain-nginx) examples further down are untested suggestions. The proxy can run on the same PC or on another machine, such as a home server or Raspberry Pi.
 
 ```
 Phone ──HTTPS──► your router :443 ──► proxy (e.g. 192.168.1.20) ──HTTP──► your PC 192.168.1.10:8766
@@ -33,7 +33,7 @@ Phone ──HTTPS──► your router :443 ──► proxy (e.g. 192.168.1.20) 
    - an **A record**: `fm26 → <your public IP>`, or
    - a **CNAME** to a name that already points home, e.g. `fm26 → example.com`.
 3. **If your home IP changes** (most home connections): use your DNS provider's dynamic DNS option, or a dynamic DNS service, to keep the record current.
-4. **Cloudflare users:** set the record to **DNS only** (grey cloud) so Let's Encrypt can reach your proxy. Or use [Cloudflare Tunnel](phone-cloudflare-tunnel.md) instead.
+4. **Cloudflare users:** set the record to **DNS only** (grey cloud) so Let's Encrypt can reach your proxy. Or try [Cloudflare Tunnel](phone-cloudflare-tunnel.md) instead (untested suggestion).
 
 **Check:** `nslookup fm26.example.com 1.1.1.1` should return your public IP.
 
@@ -110,6 +110,8 @@ In **Settings › Phone**:
 3. **Install:** add it to the home screen ([how](phone.md#installing-it-on-your-phone)).
 
 ## Caddy
+> ⚠️ **Untested suggestion:** a standard Caddy setup that should work the same way, but it hasn't been tried with FM26 Analyst.
+
 [Caddy](https://caddyserver.com) gets certificates by itself. In your `Caddyfile`:
 ```caddy
 fm26.example.com {
@@ -121,6 +123,8 @@ fm26.example.com {
 `flush_interval -1` streams coach answers. Ports 80 and 443 must be forwarded to the Caddy machine, as above.
 
 ## Plain nginx
+> ⚠️ **Untested suggestion:** the usual nginx equivalent of the NPM setup above, not tried with FM26 Analyst.
+
 With a certificate from certbot (or similar):
 ```nginx
 server {
